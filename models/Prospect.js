@@ -1,6 +1,8 @@
 const mongoose = require("mongoose")
 const Joi = require("joi");
 
+const DirectMailInfoSchema = require("./DirectMailInfo").DirectMailInfoSchema;
+
 const PropspectSchema = new mongoose.Schema({
     propertyAddress: {
         type: String,
@@ -62,7 +64,7 @@ const PropspectSchema = new mongoose.Schema({
         type: String,
         required: false,
       },
-        phone1: {
+      phone1: {
           type: Number,
         },
       phone2: {
@@ -100,6 +102,21 @@ const PropspectSchema = new mongoose.Schema({
         type: String,
         required: false
       },
+      //1 to 1 embedded relationship to DirectMailInfo object
+      directMailInfo : {
+        type: DirectMailInfoSchema,
+        required: true,
+        default: {
+          
+         }
+      },
+      //many to many reference relationship to ProspectTag object
+      tags: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ProspectTag",
+        }
+      ]
 });
 
 const Prospect = new mongoose.model("Prospect", PropspectSchema)
@@ -121,6 +138,7 @@ const validateProspect = data => {
         mailingState: Joi.string().min(2).max(2).required(),
         mailingZipcode: Joi.string().min(5).max(5).required(),
         mailingCounty: Joi.string().min(2).max(50),
+        
         phone1: Joi.number().min(7).max(10000000000),
         phone2: Joi.number().min(7).max(10000000000),
         phone3: Joi.number().min(7).max(10000000000),
