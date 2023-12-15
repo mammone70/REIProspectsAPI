@@ -1,10 +1,13 @@
 const mongoose = require("mongoose")
 const Joi = require("joi");
+const uniqueValidator = require('mongoose-unique-validator');
 
 const DirectMailInfoSchema = require("./DirectMailInfo").DirectMailInfoSchema;
 
-const PropspectSchema = new mongoose.Schema({
-    propertyAddress: {
+class Prospect {
+  initSchema(){
+    const schema = new mongoose.Schema({
+      propertyAddress: {
         type: String,
         required: [true, "Property Address is required."],
       },
@@ -108,7 +111,7 @@ const PropspectSchema = new mongoose.Schema({
         required: true,
         default: {
           
-         }
+        }
       },
       //many to many reference relationship to ProspectTag object
       tags: [
@@ -117,9 +120,21 @@ const PropspectSchema = new mongoose.Schema({
           ref: "ProspectTag",
         }
       ]
-});
+    },  { 'timestamps': true } );
+  
+    schema.plugin( uniqueValidator );
+    try {
+        mongoose.model( 'prospect', schema );
+    } catch ( e ) {
 
-const Prospect = new mongoose.model("Prospect", PropspectSchema)
+    }
+  };
+
+  getInstance() {
+    this.initSchema();
+    return mongoose.model( 'prospect' );
+  }
+};
 
 const validateProspect = data => {
     const schema = Joi.object({

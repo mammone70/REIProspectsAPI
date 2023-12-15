@@ -5,6 +5,15 @@ const mongoose = require("mongoose");
 const { DirectMailInfo } = require("../models/DirectMailInfo");
 const router = require("express").Router();
 
+const ProspectController = require( '../controllers/ProspectController' );
+const AuthController = require( '../controllers/AuthController' );
+
+router.post( '/', AuthController.checkLogin, ProspectController.insert );
+router.get( '/', AuthController.checkLogin, ProspectController.getAll );
+router.get( '/:id', AuthController.checkLogin, ProspectController.get );
+router.put( '/:id', AuthController.checkLogin, ProspectController.update );
+router.delete( '/:id', AuthController.checkLogin, ProspectController.delete );
+
 //create a prospect
 // router.post("/Prospect", auth, async (req, res) => {
 //     //const {error} = validateProspect(req.body);

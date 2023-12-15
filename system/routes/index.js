@@ -50,6 +50,7 @@ router.use( ( err, req, res, next ) => {
 
     res.status( error.statusCode );
     res.json( error );
-    next();
+    //already wrote the response so don't call next()
+    //next();
 } );
 module.exports = router;
