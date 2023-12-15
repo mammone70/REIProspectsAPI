@@ -1,4 +1,4 @@
-const { Service } = require( '../system/services/Service' );
+const { Service } = require( '../system/services' );
 const autoBind = require( 'auto-bind' );
 
 class UserService extends Service {

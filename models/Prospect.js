@@ -1,8 +1,9 @@
 const mongoose = require("mongoose")
 const Joi = require("joi");
 const uniqueValidator = require('mongoose-unique-validator');
+const { DirectMailInfoSchema } = require("./DirectMailInfo");
 
-const DirectMailInfoSchema = require("./DirectMailInfo").DirectMailInfoSchema;
+const DirectMailInfo = require("./DirectMailInfo").DirectMailInfo;
 
 class Prospect {
   initSchema(){
@@ -109,9 +110,7 @@ class Prospect {
       directMailInfo : {
         type: DirectMailInfoSchema,
         required: true,
-        default: {
-          
-        }
+        default: {}
       },
       //many to many reference relationship to ProspectTag object
       tags: [
@@ -124,7 +123,7 @@ class Prospect {
   
     schema.plugin( uniqueValidator );
     try {
-        mongoose.model( 'prospect', schema );
+        mongoose.model( 'Prospect', schema );
     } catch ( e ) {
 
     }
@@ -132,7 +131,7 @@ class Prospect {
 
   getInstance() {
     this.initSchema();
-    return mongoose.model( 'prospect' );
+    return mongoose.model( 'Prospect' );
   }
 };
 

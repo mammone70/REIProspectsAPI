@@ -1,10 +1,10 @@
 const { Service } = require( '../system/services' );
 
-class ProspectService extends Service {
+class ProspectTagService extends Service {
     constructor( model ) {
         super( model );
     }
 
 }
 
-module.exports = { ProspectService };
+module.exports = { ProspectTagService };
