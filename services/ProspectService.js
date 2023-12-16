@@ -43,6 +43,25 @@ class ProspectService extends Service {
             throw e;
         }
     }
+
+    /**
+     *  Adds an array of ProspectTag IDs to Prospect
+     *  @param prospectId: String
+     *  @param tagIds: Array
+     *  @returns {Promise<any>}
+     */
+    async addTagListToProspect( prospectId, tagIds ) {
+        try {
+            const updatedProspect = await this.model.findByIdAndUpdate(
+                prospectId,
+                { $addToSet: { tags: tagIds } },
+                { new: true, useFindAndModify: false }
+              );
+            return new HttpResponse(updatedProspect);
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
 module.exports = { ProspectService };

@@ -19,7 +19,11 @@ router.delete( '/:id', AuthController.checkLogin, ProspectController.delete );
 
 //add a list of ProspectTag ids to a Prospect
 //overwrite option?  create option?
-//router.post('/:id/ProspectTags')
+router.put(
+  '/:prospectId/ProspectTags',
+  AuthController.checkLogin,
+  ProspectToProspectTagController.addListOfTagsToProspect
+  )
 
 //add a single ProspectTag to a Prospect
 router.put(

@@ -22,7 +22,6 @@ class ProspectToProspectTagController {
 
     async addTagToProspect( req, res, next ){
         const { prospectId, tagId } = req.params;
-
         try {
             const updatedProspectResponse = await this.prospectService.addTagToProspect(prospectId, tagId);
             const updatedTagResponse = await this.prospectTagService.addProspectToTag(prospectId, tagId);
@@ -51,7 +50,20 @@ class ProspectToProspectTagController {
     }
 
     async addListOfTagsToProspect( req, res, next) {
-
+        const { prospectId } = req.params;
+        const tagIds = req.body.tagIds;
+        
+        try {
+            const updatedProspectResponse = await this.prospectService.addTagListToProspect(prospectId, tagIds);
+            const updatedTagResponse = await this.prospectTagService.addProspectToManyTags(prospectId, tagIds);
+            
+            return res
+                //.status(200)
+                .status(updatedProspectResponse.statusCode)
+                .json(updatedProspectResponse);
+        } catch (e) {
+            next(e);
+        }
     }
 
 
