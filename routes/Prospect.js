@@ -27,8 +27,13 @@ router.put(
   AuthController.checkLogin, 
   ProspectToProspectTagController.addTagToProspect
 );
+
 //delete a single ProspectTag from a Prospect
-//router.delete('/:prospectId/ProspectTags/:tagId)
+router.delete(
+  '/:prospectId/ProspectTags/:tagId',
+  AuthController.checkLogin, 
+  ProspectToProspectTagController.deleteTagFromProspect
+);
 
 //get all ProspectTags for a Prospect
 //router.get('/:id/ProspectTags)

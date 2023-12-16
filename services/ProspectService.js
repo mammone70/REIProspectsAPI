@@ -20,7 +20,25 @@ class ProspectService extends Service {
                 { new: true, useFindAndModify: false }
               );
             return new HttpResponse(updatedProspect);
-            // return updatedProspect;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * @param prospectId: String
+     * @param tagId: String
+     * @returns {Promise<any>}
+     */
+    async deleteTagFromProspect( prospectId, tagId ) {
+        try {
+            const updatedProspect = await this.model.findByIdAndUpdate(
+                prospectId,
+                { $pull: { tags: tagId } },
+                { new: true, useFindAndModify: false }
+              );
+            return new HttpResponse(updatedProspect);
         } catch (e) {
             throw e;
         }

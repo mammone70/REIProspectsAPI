@@ -25,6 +25,25 @@ class ProspectTagService extends Service {
             throw e;
         }
     }
+
+    /**
+     *
+     * @param prospectId: String
+     * @param tagId: String
+     * @returns {Promise<any>}
+     */
+    async deleteProspectFromTag( prospectId, tagId ) {
+        try {
+            const updatedProspectToTag = await this.model.findByIdAndUpdate(
+                tagId,
+                { $pull: { prospects: prospectId } },
+                { new: true, useFindAndModify: false }
+              );
+              return new HttpResponse(updatedProspectToTag);
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
 module.exports = { ProspectTagService };

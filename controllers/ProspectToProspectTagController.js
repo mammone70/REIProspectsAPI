@@ -29,7 +29,6 @@ class ProspectToProspectTagController {
             
             return res
                 .status(updatedProspectResponse.statusCode)
-                //.status(200)
                 .json(updatedProspectResponse);
         } catch (e) {
             next(e);
@@ -37,7 +36,18 @@ class ProspectToProspectTagController {
     }
 
     async deleteTagFromProspect( req, res, next) {
+        const { prospectId, tagId } = req.params;
 
+        try {
+            const updatedProspectResponse = await this.prospectService.deleteTagFromProspect(prospectId, tagId);
+            const updatedTagResponse = await this.prospectTagService.deleteProspectFromTag(prospectId, tagId);
+            
+            return res
+                .status(updatedProspectResponse.statusCode)
+                .json(updatedProspectResponse);
+        } catch (e) {
+            next(e);
+        }
     }
 
     async addListOfTagsToProspect( req, res, next) {
