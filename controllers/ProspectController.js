@@ -12,8 +12,7 @@ class ProspectController extends Controller {
     constructor( service ) {
         super( service );
         autoBind( this );
-    }
-
+    };
 }
 
 module.exports = new ProspectController( prospectService );
