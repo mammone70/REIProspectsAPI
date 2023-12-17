@@ -1,6 +1,8 @@
 const mongoose = require("mongoose")
 const Joi = require("joi");
 const uniqueValidator = require('mongoose-unique-validator');
+var addresser = require('addresser');
+
 const { DirectMailInfoSchema } = require("./DirectMailInfo");
 
 const DirectMailInfo = require("./DirectMailInfo").DirectMailInfo;
@@ -8,6 +10,16 @@ const DirectMailInfo = require("./DirectMailInfo").DirectMailInfo;
 class Prospect {
   initSchema(){
     const schema = new mongoose.Schema({
+      fullPropertyAddressId: {
+        type: String,
+        unique: true,
+        required:true,
+      },
+      formattedPropertyAddress: {
+        type: String,
+        unique: true,
+        required:true,
+      },
       propertyAddress: {
         type: String,
         required: [true, "Property Address is required."],
@@ -121,6 +133,47 @@ class Prospect {
       ]
     },  { 'timestamps': true } );
   
+    const generateAddressProps = async function (next, prospect){
+      try{
+        //generate fullPropertyAddressId even if none of the address
+        //components have been changed to insure fullPropertyAddressId
+        //isn't manually overwritten
+        var parsedAddress =  addresser.parseAddress(
+          prospect.propertyAddress + "," +
+          prospect.propertyCity + "," +
+          prospect.propertyState + " " +
+          prospect.propertyZipcode
+        );
+
+        prospect.fullPropertyAddressId = parsedAddress.id;
+        prospect.formattedPropertyAddress = parsedAddress.formattedAddress;
+
+        console.log( 'Set fullPropertyAddressId', prospect.fullPropertyAddressId );
+        console.log( 'Set formattedPropertyAddress', prospect.formattedPropertyAddress );
+        
+      } catch (e) {
+        throw e;
+      }
+      next();
+    };
+
+    //generate 'fullPropertyAddressId' and 'formattedPropertyAddress' from address components
+    schema.pre( 'validate', async function( next ) {
+      try {
+        generateAddressProps(next, this);
+      } catch (e){
+        throw e;
+      }
+    });
+
+    schema.pre( 'findOneAndUpdate', async function( next ) {
+      try {
+        generateAddressProps(next, this._update);
+      } catch (e){
+        throw e;
+      }
+    });
+
     schema.plugin( uniqueValidator );
     try {
         mongoose.model( 'Prospect', schema );
