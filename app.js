@@ -10,6 +10,8 @@ const auth = require("./middleware/auth");
 
 const app = express();
 
+global.__basedir = __dirname;
+
 //middleware/controllers
 
 app.use(express.json());

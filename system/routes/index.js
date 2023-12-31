@@ -5,6 +5,7 @@ const pluralize = require( 'pluralize' );
 const path = require( 'path' );
 
 pluralize.addUncountableRule( 'auth' );
+pluralize.addUncountableRule( 'csvUpload' );
 
 const fs = require( 'fs' );
 const { HttpError } = require( '../helpers/HttpError' );

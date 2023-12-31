@@ -1,5 +1,9 @@
+const { Prospect } = require('../models/Prospect');
 const { HttpResponse } = require('../system/helpers/HttpResponse');
 const { Service } = require( '../system/services' );
+
+const { ProspectTagService } = require('./ProspectTagService');
+const { ProspectTag } = require('../models/ProspectTag');
 
 class ProspectService extends Service {
     constructor( model ) {
@@ -58,6 +62,71 @@ class ProspectService extends Service {
                 { new: true, useFindAndModify: false }
               );
             return new HttpResponse(updatedProspect);
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async bulkUpsertProspects(prospects, tagList) {
+        try {
+            const prospectTagService =new ProspectTagService(ProspectTag);
+
+            //TODO track update stats
+            for(let prospect of prospects){
+                //if missing any required address info, skip record
+                if(
+                    !prospect.propertyAddress ||
+                    !prospect.propertyCity ||
+                    !prospect.propertyState ||
+                    !prospect.propertyZipcode
+                ) continue; //TODO log invalid record 
+
+                let parsedAddress = Prospect.getParsedAddress(
+                                                    prospect.propertyAddress,
+                                                    prospect.propertyCity,
+                                                    prospect.propertyState,
+                                                    prospect.propertyZipcode
+                                                );
+
+                let updatedProspect = await this.model.findOneAndUpdate(
+                    //filter
+                    {
+                        'fullPropertyAddressId' : parsedAddress.id,
+                    },
+                    
+                    //update prospect
+                    prospect,
+                    
+                    //options
+                    {
+                        new: true,
+                        upsert:true,
+                    },
+                );
+
+                if(tagList){
+                    const updatedProspectResponse 
+                        = await this.addTagListToProspect(updatedProspect.id, tagList);
+                    const updatedTagResponse 
+                        = await prospectTagService.addProspectToManyTags(updatedProspect.id, tagList);            
+                }
+            }            
+            //can't invoke middleware on bulkWrite so will do each upsert individually for now
+            // for(let prospect of prospects){
+            //     prospectUpserts.push({
+            //         'updateOne' : {
+            //             'filter' : {
+            //                 'propertyAddress': prospect.propertyAddress,
+            //                 'propertyCity': prospect.propertyCity,
+            //                 'propertyState': prospect.propertyState,
+            //                 'propertyZipcode': prospect.propertyZipcode,                                
+            //             },
+            //             'update' : prospect,
+            //             'upsert' : true,
+            //         }
+            //     });
+            // }
+            // await this.model.bulkWrite(prospectUpserts);
         } catch (e) {
             throw e;
         }

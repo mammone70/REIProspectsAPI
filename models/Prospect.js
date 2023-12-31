@@ -4,6 +4,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 var addresser = require('addresser');
 
 const { DirectMailInfoSchema } = require("./DirectMailInfo");
+const { addUncountableRule } = require("pluralize");
 
 const DirectMailInfo = require("./DirectMailInfo").DirectMailInfo;
 
@@ -13,12 +14,12 @@ class Prospect {
       fullPropertyAddressId: {
         type: String,
         unique: true,
-        required:true,
+        required:[true, "Full Property Address is required."],
       },
       formattedPropertyAddress: {
         type: String,
         unique: true,
-        required:true,
+        required:[true, "Formatted Property Address is required."],
       },
       propertyAddress: {
         type: String,
@@ -132,24 +133,24 @@ class Prospect {
         }
       ]
     },  { 'timestamps': true } );
-  
+
     const generateAddressProps = async function (next, prospect){
       try{
         //generate fullPropertyAddressId even if none of the address
         //components have been changed to insure fullPropertyAddressId
         //isn't manually overwritten
-        var parsedAddress =  addresser.parseAddress(
-          prospect.propertyAddress + "," +
-          prospect.propertyCity + "," +
-          prospect.propertyState + " " +
+        var parsedAddress =  Prospect.getParsedAddress(
+          prospect.propertyAddress,
+          prospect.propertyCity,
+          prospect.propertyState,
           prospect.propertyZipcode
         );
 
         prospect.fullPropertyAddressId = parsedAddress.id;
         prospect.formattedPropertyAddress = parsedAddress.formattedAddress;
 
-        console.log( 'Set fullPropertyAddressId', prospect.fullPropertyAddressId );
-        console.log( 'Set formattedPropertyAddress', prospect.formattedPropertyAddress );
+        // console.log( 'Set fullPropertyAddressId', prospect.fullPropertyAddressId );
+        // console.log( 'Set formattedPropertyAddress', prospect.formattedPropertyAddress );
         
       } catch (e) {
         throw e;
@@ -166,9 +167,24 @@ class Prospect {
       }
     });
 
-    schema.pre( 'findOneAndUpdate', async function( next ) {
+    schema.pre( ['findOneAndUpdate', 'updateOne', 'findByIdAndUpdate'], async function( next ) {
       try {
-        generateAddressProps(next, this._update);
+        const existingProspect = await this.model.findOne(this.getQuery());
+        const updatedProspect = this.getUpdate();
+
+        //populate updated Prospect Address info with existing info
+        //if it is not being updated so that the Full Address properties
+        //can be generated
+        if (updatedProspect.propertyAddress == null)
+          updatedProspect.propertyAddress = existingProspect.propertyAddress;
+        if (updatedProspect.propertyCity == null)
+          updatedProspect.propertyCity = existingProspect.propertyCity;
+        if (updatedProspect.propertyState == null)
+          updatedProspect.propertyState = existingProspect.propertyState;
+        if (updatedProspect.propertyZipcode == null)
+          updatedProspect.propertyZipcode = existingProspect.propertyZipcode;
+        
+        generateAddressProps(next, updatedProspect);
       } catch (e){
         throw e;
       }
@@ -185,6 +201,10 @@ class Prospect {
   getInstance() {
     this.initSchema();
     return mongoose.model( 'Prospect' );
+  }
+
+  static getParsedAddress(address, city, state, zipcode) {
+    return addresser.parseAddress(address + "," + city + "," + state + " " + zipcode);
   }
 };
 
