@@ -23,7 +23,7 @@ router.put(
   '/:prospectId/ProspectTags',
   AuthController.checkLogin,
   ProspectToProspectTagController.addListOfTagsToProspect
-  )
+);
 
 //add a single ProspectTag to a Prospect
 router.put(

@@ -49,7 +49,8 @@ class CSVUploadController {
                     // console.table(prospects);
                     // return res.status(200).send("Upload done.");
                     prospectService.bulkUpsertProspects(prospects, tagIds)
-                        .then(() => {
+                        .then((bulkUpsertStats) => {
+                            
                             res.status(200).json({
                             message:
                                 "Uploaded the file successfully: " + req.file.originalname,

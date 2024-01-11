@@ -43,7 +43,11 @@ class AuthController {
             password,
         } = req.body;
 
-            //validate properties
+        console.log(name);
+        console.log(email);
+        console.log(password);
+        
+        //validate properties
         if(!name || !email || !password)
             return res.
                 status(400)
