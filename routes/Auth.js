@@ -4,10 +4,13 @@ const express = require( 'express' ),
     router = express.Router();
 
 router.post( '/login', AuthController.login );
-router.get( '/checkLogin', AuthController.checkLogin );
 router.get( '/logout', AuthController.checkLogin, AuthController.logout );
 router.post( '/register', AuthController.register );
 router.post( '/changePassword', AuthController.checkLogin, AuthController.changePassword );
+
+router.get("/checkLogin", AuthController.checkLogin, async(req, res) => {
+    return res.status(200).json({...req.user._doc});
+});
 
 module.exports = router;
 
