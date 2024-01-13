@@ -8,6 +8,7 @@ const router = require("express").Router();
 const ProspectController = require( '../controllers/ProspectController' );
 const AuthController = require( '../controllers/AuthController' );
 const ProspectToProspectTagController = require('../controllers/ProspectToProspectTagController');
+const ProspectToProspectListController = require('../controllers/ProspectToProspectListController');
 
 router.post( '/', AuthController.checkLogin, ProspectController.insert );
 router.get( '/', AuthController.checkLogin, ProspectController.getAll );
@@ -37,6 +38,28 @@ router.delete(
   '/:prospectId/ProspectTags/:tagId',
   AuthController.checkLogin, 
   ProspectToProspectTagController.deleteTagFromProspect
+);
+
+//add a list of ProspectList ids to a Prospect
+//overwrite option?  create option?
+router.put(
+  '/:prospectId/ProspectLists',
+  AuthController.checkLogin,
+  ProspectToProspectListController.addListsToProspect
+);
+
+//add a single ProspectList to a Prospect
+router.put(
+  '/:prospectId/ProspectLists/:listId', 
+  AuthController.checkLogin, 
+  ProspectToProspectListController.addListToProspect
+);
+
+//delete a single ProspectList from a Prospect
+router.delete(
+  '/:prospectId/ProspectLists/:tagId',
+  AuthController.checkLogin, 
+  ProspectToProspectListController.deleteListFromProspect
 );
 
 //get all ProspectTags for a Prospect

@@ -39,7 +39,7 @@ class Prospect {
       },
       propertyCounty: {
         type: String,
-        required: [true, "Property County is required."],
+        required: false,
       },
       ownerFirstName: {
         type: String,
@@ -131,7 +131,14 @@ class Prospect {
           type: mongoose.Schema.Types.ObjectId,
           ref: "ProspectTag",
         }
-      ]
+      ],
+      //many to many reference relationship to ProspectList object
+      lists: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ProspectList",
+        }
+      ],     
     },  { 'timestamps': true } );
 
     const generateAddressProps = async function (next, prospect){

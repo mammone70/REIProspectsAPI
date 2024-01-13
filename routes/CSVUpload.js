@@ -10,4 +10,10 @@ router.post(
     csvController.upload
 );
 
+router.get(
+    "/FieldMapping",
+    AuthController.checkLogin,
+    csvController.getProspectFields
+);
+
 module.exports = router;
