@@ -96,21 +96,6 @@ class CSVUploadController {
             required : false,
         },
         {
-            fieldName : "mailingCounty",
-            displayName : "Mailing County",
-            required : false,
-        },
-        {
-            fieldName : "mailingCounty",
-            displayName : "Mailing County",
-            required : false,
-        },
-        {
-            fieldName : "mailingCounty",
-            displayName : "Mailing County",
-            required : false,
-        },
-        {
             fieldName : "phone1",
             displayName : "Phone 1",
             required : false,
