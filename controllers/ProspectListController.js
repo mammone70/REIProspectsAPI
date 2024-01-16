@@ -16,4 +16,4 @@ class ProspectListController extends Controller {
 
 }
 
-module.exports = new ProspectListController( ProspectListService );
+module.exports = new ProspectListController( prospectListService );
