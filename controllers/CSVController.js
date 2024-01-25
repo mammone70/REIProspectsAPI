@@ -23,12 +23,12 @@ class CSVUploadController {
         {
             fieldName : "ownerLastName",
             displayName : "Owner Last Name",
-            required : true,
+            required : false,
         },
         {
             fieldName : "ownerFirstName",
             displayName : "Owner First Name",
-            required : true,
+            required : false,
         },
         {
             fieldName : "propertyAddress",
@@ -73,22 +73,22 @@ class CSVUploadController {
         {
             fieldName : "mailingAddress",
             displayName : "Mailing Address",
-            required : true,
+            required : false,
         },
         {
             fieldName : "mailingCity",
             displayName : "Mailing City",
-            required : true,
+            required : false,
         },
         {
             fieldName : "mailingState",
             displayName : "Mailing State",
-            required : true,
+            required : false,
         },
         {
             fieldName : "mailingZipcode",
             displayName : "Mailing Zip Code",
-            required : true,
+            required : false,
         },
         {
             fieldName : "mailingCounty",
