@@ -16,4 +16,10 @@ router.get(
     csvController.getProspectFields
 );
 
+router.get(
+    "/Import",
+    // AuthController.checkLogin,
+    csvController.import
+);
+
 module.exports = router;

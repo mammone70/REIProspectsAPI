@@ -66,7 +66,7 @@ class ProspectToProspectListController {
         }
     }
 
-    async addListOfProspectsTolist( req, res, next) {
+    async addListOfProspectsToList( req, res, next) {
         const { prospectListId } = req.params;
         const prospectIds = req.body.prospectIds;
         

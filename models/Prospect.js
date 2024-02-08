@@ -43,11 +43,11 @@ class Prospect {
       },
       ownerFirstName: {
         type: String,
-        required: [true, "Owner First Name is required."],
+        // required: [true, "Owner First Name is required."],
       },
       ownerLastName: {
         type: String,
-        required: [true, "Owner Last Name is required."],
+        // required: [true, "Owner Last Name is required."],
       },
       ownerEntity: {
         type: String,
@@ -63,19 +63,19 @@ class Prospect {
       },
       mailingAddress: {
         type: String,
-        required: [true, "Mailing Address is required."],
+        //required: [true, "Mailing Address is required."],
       },
       mailingCity: {
         type: String,
-        required: [true, "Mailing City is required."],
+        // required: [true, "Mailing City is required."],
       },
       mailingState: {
         type: String,
-        required: [true, "Mailing State is required."],
+        // required: [true, "Mailing State is required."],
       },
       mailingZipcode: {
         type: String,
-        required: [true, "Mailing Zipcode is required."],
+        // required: [true, "Mailing Zipcode is required."],
       },
       mailingCounty: {
         type: String,
@@ -137,7 +137,8 @@ class Prospect {
         {
           type: mongoose.Schema.Types.ObjectId,
           ref: "ProspectList",
-        }
+          default: {}
+        },
       ],     
     },  { 'timestamps': true } );
 

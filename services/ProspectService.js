@@ -4,6 +4,8 @@ const { Service } = require( '../system/services' );
 
 const { ProspectTagService } = require('./ProspectTagService');
 const { ProspectTag } = require('../models/ProspectTag');
+const { ProspectListService } = require('./ProspectListService');
+const { ProspectList } = require('../models/ProspectList');
 
 class ProspectService extends Service {
     constructor( model ) {
@@ -32,6 +34,25 @@ class ProspectService extends Service {
     /**
      *
      * @param prospectId: String
+     * @param listId: String
+     * @returns {Promise<any>}
+     */
+    async addListToProspect( prospectId, listId ) {
+        try {
+            const updatedProspect = await this.model.findByIdAndUpdate(
+                prospectId,
+                { $addToSet: { lists: listId } },
+                { new: true, useFindAndModify: false }
+              );
+            return new HttpResponse(updatedProspect);
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * @param prospectId: String
      * @param tagId: String
      * @returns {Promise<any>}
      */
@@ -40,6 +61,25 @@ class ProspectService extends Service {
             const updatedProspect = await this.model.findByIdAndUpdate(
                 prospectId,
                 { $pull: { tags: tagId } },
+                { new: true, useFindAndModify: false }
+              );
+            return new HttpResponse(updatedProspect);
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * @param prospectId: String
+     * @param listId: String
+     * @returns {Promise<any>}
+     */
+    async deleteListFromProspect( prospectId, listId ) {
+        try {
+            const updatedProspect = await this.model.findByIdAndUpdate(
+                prospectId,
+                { $pull: { lists: listId } },
                 { new: true, useFindAndModify: false }
               );
             return new HttpResponse(updatedProspect);
@@ -68,6 +108,25 @@ class ProspectService extends Service {
     }
 
     /**
+     *  Adds an array of ProspectList IDs to Prospect
+     *  @param prospectId: String
+     *  @param listIds: Array
+     *  @returns {Promise<any>}
+     */
+    async addListListsToProspect( prospectId, listIds ) {
+        try {
+            const updatedProspect = await this.model.findByIdAndUpdate(
+                prospectId,
+                { $addToSet: { lists: listIds } },
+                { new: true, useFindAndModify: false }
+              );
+            return new HttpResponse(updatedProspect);
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
      *  Adds a ProspectTag ID to an array of Prospects
      *  @param prospectTagId: String
      *  @param prospectIds: Array
@@ -86,9 +145,29 @@ class ProspectService extends Service {
         }   
     }
 
-    async bulkUpsertProspects(prospects, tagList) {
+    /**
+     *  Adds a ProspectList ID to an array of Prospects
+     *  @param prospectListId: String
+     *  @param prospectIds: Array
+     *  @returns {Promise<any>}
+     */
+    async addListToManyProspects(prospectListId, prospectIds) {
+        try {
+            const response = await this.model.updateMany(
+                {'_id': prospectIds},
+                { $addToSet: { lists: prospectListId } },
+                //{ new: true, useFindAndModify: false }
+              );
+              return new HttpResponse(response);
+        } catch (e) {
+            throw e;
+        }   
+    }
+
+    async bulkUpsertProspects(prospects, tagList, listList) {
         try {
             const prospectTagService = new ProspectTagService(ProspectTag);
+            const prospectListService = new ProspectListService(ProspectList);
 
             //Track Upsert Stats
             let insertCount = 0, updateCount = 0;
@@ -130,6 +209,14 @@ class ProspectService extends Service {
                         = await this.addTagListToProspect(updatedProspect.id, tagList);
                     const updatedTagResponse 
                         = await prospectTagService.addProspectToManyTags(updatedProspect.id, tagList);            
+                }
+
+                if(listList){
+                    //TODO
+                    // const updatedProspectResponse 
+                    //     = await this.addTagListToProspect(updatedProspect.id, tagList);
+                    // const updatedTagResponse 
+                    //     = await prospectTagService.addProspectToManyTags(updatedProspect.id, tagList);            
                 }
 
                 updatedProspect.isNew ? insertCount++ : updateCount++;

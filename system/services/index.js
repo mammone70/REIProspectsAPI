@@ -88,6 +88,21 @@ class Service {
         }
     }
 
+    async upsert( filter, update ) {
+        try {
+            const item = await this.model.findOneAndUpdate( filter, update,
+                { 
+                    'new': true,
+                    'upsert': true, 
+                }
+            );
+
+            return new HttpResponse( item );
+        } catch ( errors ) {
+            throw errors;
+        }
+    }
+
     async delete( id ) {
         try {
             const item = await this.model.findByIdAndDelete( id );

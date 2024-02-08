@@ -18,7 +18,7 @@ router.delete( '/:id', AuthController.checkLogin, ProspectListController.delete 
 router.put(
     '/:ProspectListId/Prospects',
     AuthController.checkLogin,
-    ProspectToProspectListController.addListOfProspectsTolist
+    ProspectToProspectListController.addListOfProspectsToList
 );
 
 module.exports = router;
