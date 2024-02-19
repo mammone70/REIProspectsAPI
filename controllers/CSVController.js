@@ -182,21 +182,37 @@ class CSVUploadController {
                 console.log(error);
                 res.status(500).send({
                     message: "Couldn't retrieve CSV fields.",
-            });
+                });
         }
     }
 
     async upload (req, res, next) {
         try {
             if (req.file == undefined) {
-              return res.status(400).send("Please upload a CSV file!");
+                return res.status(400).send({
+                    message: "Couldn't retrieve CSV fields.",
+                });
             }
 
             //Get CSV Header to Prospect Field Map from submitted form
-            let csvHeaderToFieldMap = req.body;
+            const {tagIds, listIds, ...fieldMapping } = req.body;
             
-            let tagIds = csvHeaderToFieldMap.tagIds.split(",");
+            const tags = tagIds.split(",");
+            const lists = listIds.split(",");
+            
+            //convert header mapping to set
+            const csvHeaderToFieldMap = {};
+            Object
+                .entries(fieldMapping)
+                    .forEach(
+                        ([fieldName, headerName]) => {
+                            if(headerName != 'undefined'){
+                                csvHeaderToFieldMap[headerName] = fieldName;
+                            }
+                        }
+            );
             let prospects = [];
+    
 
             //TODO put this in config
             let path = __basedir + "/resources/static/assets/uploads/" + req.file.filename;
@@ -218,7 +234,7 @@ class CSVUploadController {
                 .on("end", () => {
                     // console.table(prospects);
                     // return res.status(200).send("Upload done.");
-                    prospectService.bulkUpsertProspects(prospects, tagIds)
+                    prospectService.bulkUpsertProspects(prospects, tags, lists)
                         .then((bulkUpsertStats) => {
                             
                             res.status(200).json({

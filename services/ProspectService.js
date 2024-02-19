@@ -212,11 +212,10 @@ class ProspectService extends Service {
                 }
 
                 if(listList){
-                    //TODO
-                    // const updatedProspectResponse 
-                    //     = await this.addTagListToProspect(updatedProspect.id, tagList);
-                    // const updatedTagResponse 
-                    //     = await prospectTagService.addProspectToManyTags(updatedProspect.id, tagList);            
+                    const updatedProspectResponse 
+                        = await this.addListListsToProspect(updatedProspect.id, listList);
+                    const updatedListResponse 
+                        = await prospectListService.addProspectToManyLists(updatedProspect.id, listList);            
                 }
 
                 updatedProspect.isNew ? insertCount++ : updateCount++;
@@ -225,7 +224,7 @@ class ProspectService extends Service {
                 insertCount:insertCount, 
                 updateCount:updateCount
             };
-            //can't invoke middleware on bulkWrite so will do each upsert individually for now
+            //^^^^can't invoke middleware on bulkWrite so will do each upsert individually for now
             // for(let prospect of prospects){
             //     prospectUpserts.push({
             //         'updateOne' : {
