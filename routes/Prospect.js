@@ -57,7 +57,7 @@ router.put(
 
 //delete a single ProspectList from a Prospect
 router.delete(
-  '/:prospectId/ProspectLists/:tagId',
+  '/:prospectId/ProspectLists/:listId',
   AuthController.checkLogin, 
   ProspectToProspectListController.deleteListFromProspect
 );

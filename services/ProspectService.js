@@ -12,6 +12,27 @@ class ProspectService extends Service {
         super( model );
     }
 
+    //override GET method to populate tags and lists
+    async get( id ) {
+        try {
+            const item = 
+                await this.model
+                    .findById( id )
+                    .populate('tags')
+                    .populate('lists');
+            if ( !item ) {
+                const error = new Error( 'Item not found' );
+
+                error.statusCode = 404;
+                throw error;
+            }
+
+            return new HttpResponse( item );
+        } catch ( errors ) {
+            throw errors;
+        }
+    }
+
     /**
      *
      * @param prospectId: String
