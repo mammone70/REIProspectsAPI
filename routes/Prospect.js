@@ -12,6 +12,7 @@ const ProspectToProspectListController = require('../controllers/ProspectToProsp
 
 router.post( '/', AuthController.checkLogin, ProspectController.insert );
 router.get( '/', AuthController.checkLogin, ProspectController.getAll );
+router.post('/Filter', AuthController.checkLogin, ProspectController.filter);
 router.get( '/:id', AuthController.checkLogin, ProspectController.get );
 router.put( '/:id', AuthController.checkLogin, ProspectController.update );
 router.delete( '/:id', AuthController.checkLogin, ProspectController.delete );

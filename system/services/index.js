@@ -16,7 +16,7 @@ class Service {
         let { skip, limit, sortBy } = query;
 
         skip = skip ? Number( skip ) : 0;
-        limit = limit ? Number( limit ) : 10;
+        limit = limit ? Number( limit ) : 10000;
         sortBy = sortBy ? sortBy : { 'createdAt': -1 };
 
         delete query.skip;

@@ -33,6 +33,45 @@ class ProspectService extends Service {
         }
     }
 
+    async filter( query, filterProps ) {
+        let { skip, limit, sortBy } = query;
+
+        skip = skip ? Number( skip ) : 0;
+        limit = limit ? Number( limit ) : 10000;
+        sortBy = sortBy ? sortBy : { 'createdAt': -1 };
+
+        delete query.skip;
+        delete query.limit;
+        delete query.sortBy;
+
+        if ( query._id ) {
+            try {
+                query._id = new mongoose.mongo.ObjectId( query._id );
+            } catch ( error ) {
+                throw new Error( 'Not able to generate mongoose id with content' );
+            }
+        }
+
+        //build filter
+        const filter = {};
+        if(filterProps.lists.length !== 0) filter["lists"] = { $in: filterProps.lists }; 
+        if(filterProps.tags.length !== 0) filter["tags"] = { $in: filterProps.tags }; 
+        
+        try {
+            const items = await this.model
+                .find( filter )
+                .sort( sortBy )
+                .skip( skip )
+                .limit( limit );
+
+            const total = await this.model.countDocuments( filter );
+
+            return new HttpResponse( items, { 'totalCount': total } );
+        } catch ( errors ) {
+            throw errors;
+        }
+    }
+
     /**
      *
      * @param prospectId: String

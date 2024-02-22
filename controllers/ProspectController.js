@@ -13,6 +13,16 @@ class ProspectController extends Controller {
         super( service );
         autoBind( this );
     };
+
+    async filter( req, res, next ) {
+        try {
+            const response = await this.service.filter( req.query, req.body );
+
+            return res.status( response.statusCode ).json( response );
+        } catch ( e ) {
+            next( e );
+        }
+    }
 }
 
 module.exports = new ProspectController( prospectService );
