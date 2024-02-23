@@ -53,9 +53,47 @@ class ProspectService extends Service {
         }
 
         //build filter
-        const filter = {};
-        if(filterProps.lists.length !== 0) filter["lists"] = { $in: filterProps.lists }; 
-        if(filterProps.tags.length !== 0) filter["tags"] = { $in: filterProps.tags }; 
+        // const filter = {};
+        // if(filterProps.lists.length !== 0) filter["lists"] = { $in: filterProps.lists }; 
+        // if(filterProps.tags.length !== 0) filter["tags"] = { $in: filterProps.tags }; 
+        
+        // filter["$expr"]["$gt"] = [
+        //     {$size: "$lists"}, 
+        //     filterProps.minListCount ? Number( filterProps.minListCount ) : 0
+        // ]
+        
+        //TODO abstract this filter building functionality into functions/classes
+        const filter = {
+            $and: [
+                {$expr: {$gt: [
+                    {$size: "$lists"}, 
+                    filterProps.minListCount ? Number( filterProps.minListCount ) : 0
+                ]}},
+                {$expr: {$lt: [
+                    {$size: "$lists"}, 
+                    filterProps.maxListCount ? Number( filterProps.maxListCount ) : Number.MAX_SAFE_INTEGER
+                ]}},
+                {$expr: {$gt: [
+                    {$size: "$lists"}, 
+                    filterProps.minListCount ? Number( filterProps.minListCount ) : 0
+                ]}},
+                {$expr: {$lt: [
+                    {$size: "$lists"}, 
+                    filterProps.maxListCount ? Number( filterProps.maxListCount ) : Number.MAX_SAFE_INTEGER
+                ]}},
+                {$expr: {$gt: [
+                    {$size: "$tags"}, 
+                    filterProps.minTagCount ? Number( filterProps.minTagCount ) : 0
+                ]}},
+                {$expr: {$lt: [
+                    {$size: "$tags"}, 
+                    filterProps.maxTagCount ? Number( filterProps.maxTagCount ) : Number.MAX_SAFE_INTEGER
+                ]}}, 
+            ]
+        }
+        if(filterProps.lists.length !== 0) filter["$and"].push({lists : { $in: filterProps.lists }});
+        if(filterProps.tags.length !== 0) filter["$and"].push({tags: { $in: filterProps.tags }}); 
+
         
         try {
             const items = await this.model
