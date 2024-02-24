@@ -73,14 +73,14 @@ class ProspectService extends Service {
                     {$size: "$lists"}, 
                     filterProps.maxListCount ? Number( filterProps.maxListCount ) : Number.MAX_SAFE_INTEGER
                 ]}},
-                {$expr: {$gt: [
-                    {$size: "$lists"}, 
-                    filterProps.minListCount ? Number( filterProps.minListCount ) : 0
-                ]}},
-                {$expr: {$lt: [
-                    {$size: "$lists"}, 
-                    filterProps.maxListCount ? Number( filterProps.maxListCount ) : Number.MAX_SAFE_INTEGER
-                ]}},
+                // {$expr: {$gt: [
+                //     {$size: "$lists"}, 
+                //     filterProps.minListCount ? Number( filterProps.minListCount ) : 0
+                // ]}},
+                // {$expr: {$lt: [
+                //     {$size: "$lists"}, 
+                //     filterProps.maxListCount ? Number( filterProps.maxListCount ) : Number.MAX_SAFE_INTEGER
+                // ]}},
                 {$expr: {$gt: [
                     {$size: "$tags"}, 
                     filterProps.minTagCount ? Number( filterProps.minTagCount ) : 0
@@ -91,9 +91,22 @@ class ProspectService extends Service {
                 ]}}, 
             ]
         }
-        if(filterProps.lists.length !== 0) filter["$and"].push({lists : { $in: filterProps.lists }});
-        if(filterProps.tags.length !== 0) filter["$and"].push({tags: { $in: filterProps.tags }}); 
 
+        if(filterProps.lists.length !== 0) {
+            filterProps.listSearchType === 'ANY'
+            ?
+                filter["$and"].push({lists : { $in: filterProps.lists }})
+            :
+                filter["$and"].push({lists : { $all: filterProps.lists }});
+        }
+
+        if(filterProps.tags.length !== 0) {
+            filterProps.tagSearchType === 'ANY'
+            ?
+                filter["$and"].push({tags : { $in: filterProps.tags }})
+            :
+                filter["$and"].push({tags : { $all: filterProps.tags }});
+        }
         
         try {
             const items = await this.model
