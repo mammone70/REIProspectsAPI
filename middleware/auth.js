@@ -6,27 +6,28 @@ module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if(authHeader){
-        //Bearer <token>
+        //authHeader  is "Bearer <token>"
         const token = authHeader.split(" ")[1];
         
         jwt.verify(token, process.env.JWT_SECRET, async(err, payload) => {
-        try {
-            if(err){
-                return res
-                            .status(401)
-                            .json({error: "Unautorized"})
+            try {
+                if(err){
+                    return res
+                        .status(401)
+                        .json({error: "Unautorized"})
+                }
+                const user = await User
+                    .findOne({_id: payload._id})
+                    .select("-password");
+                req.user = user;
+                next();
+            } catch (err){
+                console.log(err);
             }
-            const user = await User
-                        .findOne({_id: payload._id})
-                        .select("-password");
-            req.user = user;
-            next();
-        } catch (err){
-            console.log(err);
-        }});
+        });
     } else {
         return res
-                .status(403)
-                .json({error: "Forbidden"});
+            .status(403)
+            .json({error: "Forbidden"});
     }
 }

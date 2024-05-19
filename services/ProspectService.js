@@ -19,7 +19,8 @@ class ProspectService extends Service {
                 await this.model
                     .findById( id )
                     .populate('tags')
-                    .populate('lists');
+                    .populate('lists')
+                    .populate('directMailInfo');
             if ( !item ) {
                 const error = new Error( 'Item not found' );
 
